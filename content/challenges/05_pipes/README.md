@@ -1,38 +1,34 @@
 # Challenge 05 — Count the Hits
 
-Inside `~/challenges/05_pipes/manifesto.txt` is a long manifesto. The
-word **`RESISTANCE`** appears in it a specific number of times.
+A long manifesto was seized during the raid:
 
-**Goal:** count exactly how many times `RESISTANCE` appears, then
-submit `FLAG{N}` where `N` is your count.
+```
+~/challenges/05_pipes/manifesto.txt
+```
 
-## What you need to do
+It rambles for a couple hundred lines. The word **`RESISTANCE`**
+appears in it many times — and forensics wants the exact count.
 
-There are two clean ways to solve this:
+The count itself is the flag. Submit it as `FLAG{N}` where N is the
+number.
 
-- The shortest:
-  ```
-  grep -c RESISTANCE <file>
-  ```
-  `-c` tells grep to **c**ount matching lines instead of printing them.
+Eyeballing the file won't work; there are too many lines. You need
+to make the computer count for you. There's more than one way to do
+this — try to find one that uses a single command, then try a second
+way that chains two small commands together with a pipe.
 
-- The "pipe" way (more useful to learn — it composes any commands):
-  ```
-  grep RESISTANCE <file> | wc -l
-  ```
-  The `|` (pipe) sends grep's output into `wc -l`, which counts lines.
+## Objective
 
-Watch out: `grep` counts **lines** that match, not total occurrences.
-In this file every line contains the word at most once, so both ways
-agree.
+Count how many times `RESISTANCE` appears in the manifesto.
 
 ## Submit
 
 ```
-ctf submit 05 FLAG{N}
+ctf submit 05 FLAG{N}        (replace N with the count)
 ```
-(replace `N` with your count)
 
-## Commands you'll use
+## Stuck?
 
-`grep`, `wc`, `|` (pipe)
+```
+ctf hint 05
+```

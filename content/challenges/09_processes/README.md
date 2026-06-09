@@ -1,39 +1,33 @@
 # Challenge 09 — Kill the Decoy
 
-There's a rogue background process running on this machine called
-**`decoy_daemon`**. Your job: find it and kill it.
+Something is running on this host that shouldn't be: a background
+process named **`decoy_daemon`**. It's harmless for now — sleeping
+in a loop — but on a real operation you'd want it gone immediately.
 
-**Goal:** stop the `decoy_daemon` process.
+There's no GUI here. You can't right-click and "End Task." Instead
+you ask the kernel to list every process currently running, find
+the decoy by its name, note its PID (process ID), and then send it
+the kill signal yourself.
 
-## What you need to do
+(Hint: piping a process listing into `grep` is a fast way to filter
+down to just the one you want.)
 
-1. List all running processes:
-   ```
-   ps aux
-   ```
-   (lots of output! pipe it into grep to narrow down)
-2. Find the decoy:
-   ```
-   ps aux | grep decoy_daemon
-   ```
-   Note the PID (process ID) — the second column.
-3. Kill it (replace PID with the actual number):
-   ```
-   kill <PID>
-   ```
-   Or, easier, kill it by name with:
-   ```
-   pkill -f decoy_daemon
-   ```
+## Objective
+
+Locate the decoy process. Terminate it. Confirm it's gone.
 
 ## Submit
 
-Once the decoy is dead, run:
 ```
 ctf submit 09
 ```
-No flag needed — the checker confirms the process is gone.
 
-## Commands you'll use
+No flag — the checker verifies the process is no longer running. If
+it's still alive, the checker will tell you and remind you of the
+PID.
 
-`ps`, `grep`, `|`, `kill` (or `pkill`)
+## Stuck?
+
+```
+ctf hint 09
+```

@@ -1,69 +1,69 @@
 # Challenge 11 — BOSS: Operation Black Box
 
-You've earned this. The final job. Three fragments of a single flag are
-scattered across three different evidence locations. Each one requires
-a different command (or combination of commands) from your training.
+The final job.
 
-When you've assembled all three, submit:
+Three independent fragments of a single flag are scattered across
+three different evidence stashes inside `~/challenges/11_boss/`.
+Each one requires a different skill from your training — you've
+learned them all in earlier challenges.
+
+When you've collected all three fragments, glue them together with
+underscores between them and wrap in `FLAG{}`:
 
 ```
 ctf submit 11 FLAG{fragment1_fragment2_fragment3}
 ```
 
-The fragments will look like short strings (letters, digits, an
-occasional special character). Glue them with **underscores**.
+Order matters. Each fragment is a short string of letters/digits.
 
 ---
 
-## Leg 1 — RECON  (find a hidden file)
+## Leg 1 — RECON
 
-There's a hidden directory inside `~/challenges/11_boss/` whose name
-starts with a dot. Inside it is a file containing **Fragment 1**.
+Inside the boss directory there's a subdirectory the operator tried
+to keep out of casual sight. They gave it a name the system itself
+typically uses for things like settings or caches — names that the
+default file listing politely ignores.
 
-You need:
-- `ls -la` to reveal hidden entries
-- `cat` to read the file
+Look more thoroughly than the default listing does. Inside that
+subdirectory is **Fragment 1**.
 
----
-
-## Leg 2 — INTELLIGENCE  (search across many files)
+## Leg 2 — INTELLIGENCE
 
 The `dossiers/` directory contains dozens of suspect files. Exactly
-one line in one of them starts with the word **`FRAGMENT2:`**.
+one line in one of them is prefixed with `FRAGMENT2:`. You don't
+know which file. You don't have time to open them all.
 
-You need:
-- `grep -r PATTERN DIRECTORY` — the `-r` flag makes grep search
-  **recursively** through every file under the directory.
+There's a flag for the search tool that makes it search
+**recursively** through every file under a directory at once. That's
+the tool you want.
 
-Example:
-```
-grep -r "FRAGMENT2:" dossiers/
-```
+Take the value after the colon as Fragment 2.
 
----
+## Leg 3 — EXFIL
 
-## Leg 3 — EXFIL  (extract a specific line from a long file)
+The file `archive.txt` is a 5,000-line dump from the same suspect.
+**Fragment 3** is on **line 1337** — a specific line in the middle.
 
-The file `archive.txt` has thousands of lines. **Fragment 3** is on
-**line 1337**.
+You don't want to scroll. You don't want to print all 5,000 lines
+to your screen. You want a single line from the middle of a long
+file.
 
-There's a classic Unix trick for this — combine `head` and `tail`:
-
-```
-head -n 1337 archive.txt | tail -n 1
-```
-
-- `head -n 1337` takes the first 1337 lines.
-- `tail -n 1` takes the last 1 line of THAT.
-- The result: just line 1337.
+There's a classic Unix trick for this that combines two commands
+you already know (one for the beginning of a file, one for the end)
+with a pipe between them. Think about how to use them together to
+extract exactly one line.
 
 ---
 
-## Assemble
+## Submit
 
-Once you have all three fragments, join them with underscores and wrap
-in `FLAG{...}`. Submit.
+```
+ctf submit 11 FLAG{fragment1_fragment2_fragment3}
+```
 
-## Commands you'll use
+## Stuck?
 
-`ls -la`, `cat`, `grep -r`, `head`, `tail`, `|` (pipe)
+```
+ctf hint 11
+```

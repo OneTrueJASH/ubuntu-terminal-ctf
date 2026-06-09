@@ -1,18 +1,16 @@
 # Challenge 01 — Welcome to the Mainframe
 
-You've cracked your way into a server. Right now you're standing in
-your home directory, but you don't really know what's around you.
+You're in. Your SSH session just dropped you into a freshly compromised
+host, standing in the entryway: your home directory.
 
-**Goal:** find the flag file hidden in this challenge.
+Somewhere inside `~/challenges/01_navigation/` the previous tenant left
+you a welcome note containing your first flag. But they were careful —
+people who walked into the room and just glanced around wouldn't notice
+anything unusual. You'll have to look more carefully than that.
 
-## What you need to do
+## Objective
 
-1. Move into the challenge directory:
-   `cd ~/challenges/01_navigation`
-2. List everything that's here — including things that don't show up
-   by default. (Hint: things starting with `.` are hidden.)
-3. Step into the suspicious directory you find.
-4. Read the file with the flag inside.
+Find the welcome note. Read it. Submit the flag inside.
 
 ## Submit
 
@@ -20,6 +18,8 @@ your home directory, but you don't really know what's around you.
 ctf submit 01 FLAG{...}
 ```
 
-## Commands you'll use
+## Stuck?
 
-`cd`, `ls`, `pwd`, `cat`
+```
+ctf hint 01
+```
