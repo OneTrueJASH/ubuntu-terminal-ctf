@@ -1,0 +1,220 @@
+#!/bin/bash
+# ctf — the CTF dispatcher. Lists challenges, opens READMEs, checks flags.
+
+set -u
+
+CHALLENGES_DIR="$HOME/challenges"
+PROGRESS_FILE="$HOME/.ctf/progress"
+HASH_FILE="/opt/ctf/flags.sha256"
+CHECKS_DIR="/opt/ctf/checks"
+HINTS_FILE="/opt/ctf/hints.txt"
+
+mkdir -p "$(dirname "$PROGRESS_FILE")"
+touch "$PROGRESS_FILE"
+
+# --- helpers ---------------------------------------------------------------
+
+color()  { printf '\033[%sm%s\033[0m' "$1" "$2"; }
+green()  { color '1;32' "$1"; }
+red()    { color '1;31' "$1"; }
+yellow() { color '1;33' "$1"; }
+dim()    { color '2'    "$1"; }
+
+is_done() { grep -qx "$1" "$PROGRESS_FILE"; }
+mark_done() {
+    is_done "$1" || echo "$1" >> "$PROGRESS_FILE"
+}
+
+# Normalise "1" -> "01", leave "01" or "10" unchanged. Non-numeric: as-is.
+# 10#$1 forces base-10; otherwise printf treats "08" / "09" as octal and errors.
+normalize_short() {
+    if [[ "$1" =~ ^[0-9]+$ ]]; then
+        printf "%02d" "$((10#$1))"
+    else
+        echo "$1"
+    fi
+}
+
+# Extract the short id from a directory basename: "01_navigation" -> "01"
+short_of() {
+    basename "$1" | cut -d_ -f1
+}
+
+# Resolve a user-supplied short id to its full directory path.
+# Echoes the path on success, returns 1 on failure.
+dir_for() {
+    local short="$1" d
+    for d in "$CHALLENGES_DIR"/*/; do
+        [ -d "$d" ] || continue
+        if [ "$(short_of "$d")" = "$short" ]; then
+            echo "${d%/}"
+            return 0
+        fi
+    done
+    return 1
+}
+
+challenge_title() {
+    local dir="$1"
+    local readme="$dir/README.md"
+    [ -f "$readme" ] && head -1 "$readme" | sed 's/^#\+ *//' || echo "(missing)"
+}
+
+expected_hash() {
+    awk -v n="$1" '$1 == n { print $2 }' "$HASH_FILE"
+}
+
+# --- subcommands -----------------------------------------------------------
+
+cmd_list() {
+    local total done_count=0 d short title status
+    total=$(ls -d "$CHALLENGES_DIR"/*/ 2>/dev/null | wc -l | tr -d ' ')
+    echo
+    echo "  $(green '== CTF Challenges ==')"
+    echo
+    for d in "$CHALLENGES_DIR"/*/; do
+        [ -d "$d" ] || continue
+        short=$(short_of "$d")
+        title=$(challenge_title "${d%/}")
+        if is_done "$short"; then
+            status="$(green '[✓]')"
+            done_count=$((done_count + 1))
+        else
+            status="$(dim '[ ]')"
+        fi
+        printf "  %s  %s  %s\n" "$status" "$(yellow "$short")" "$title"
+    done
+    echo
+    echo "  $(dim "Solved: $done_count / $total")"
+    echo "  $(dim 'Open one with:  ctf start <NN>')"
+    echo
+}
+
+cmd_start() {
+    local short
+    short=$(normalize_short "${1:-}")
+    [ -z "$short" ] && { echo "Usage: ctf start <NN>"; return 1; }
+    local dir
+    dir=$(dir_for "$short") || {
+        echo "$(red 'No such challenge:') $short"
+        echo "Run: ctf list"
+        return 1
+    }
+    if [ -t 1 ] && command -v less >/dev/null; then
+        less -R "$dir/README.md"
+    else
+        cat "$dir/README.md"
+    fi
+}
+
+cmd_hint() {
+    local short
+    short=$(normalize_short "${1:-}")
+    [ -z "$short" ] && { echo "Usage: ctf hint <NN>"; return 1; }
+    if [ -f "$HINTS_FILE" ] && grep -q "^$short:" "$HINTS_FILE"; then
+        echo
+        echo "  $(yellow "Hint for $short:")"
+        grep "^$short:" "$HINTS_FILE" | sed "s/^$short:/   /"
+        echo
+    else
+        echo "$(dim 'No hint available — read the challenge again carefully.')"
+    fi
+}
+
+cmd_submit() {
+    local short flag="${2:-}"
+    short=$(normalize_short "${1:-}")
+    [ -z "$short" ] && { echo "Usage: ctf submit <NN> [flag]"; return 1; }
+
+    if ! dir_for "$short" >/dev/null; then
+        echo "$(red 'No such challenge:') $short"
+        return 1
+    fi
+
+    local check_script="$CHECKS_DIR/$short.sh"
+    if [ -x "$check_script" ]; then
+        if "$check_script" "$flag"; then
+            cmd_solved "$short"
+        else
+            echo "$(red '✗ Not quite.') Re-read the challenge with: ctf start $short"
+        fi
+        return
+    fi
+
+    if [ -z "$flag" ]; then
+        echo "Usage: ctf submit $short FLAG{...}"
+        return 1
+    fi
+    local got expected
+    got=$(printf %s "$flag" | sha256sum | awk '{print $1}')
+    expected=$(expected_hash "$short")
+    if [ -z "$expected" ]; then
+        echo "$(red 'No flag registered for') $short — bug, please report."
+        return 1
+    fi
+    if [ "$got" = "$expected" ]; then
+        cmd_solved "$short"
+    else
+        echo "$(red '✗ Wrong flag.') Make sure you include the FLAG{...} wrapper."
+    fi
+}
+
+cmd_solved() {
+    local short="$1"
+    mark_done "$short"
+    echo
+    echo "  $(green '   ╔═══════════════════════════════╗')"
+    echo "  $(green "   ║  ✓ Solved challenge $short!        ║")"
+    echo "  $(green '   ╚═══════════════════════════════╝')"
+    echo
+    cmd_progress
+}
+
+cmd_progress() {
+    local done_count total
+    total=$(ls -d "$CHALLENGES_DIR"/*/ 2>/dev/null | wc -l | tr -d ' ')
+    done_count=$(wc -l < "$PROGRESS_FILE" | tr -d ' ')
+    local bar="" i
+    for ((i=1; i<=total; i++)); do
+        if [ "$i" -le "$done_count" ]; then
+            bar+="█"
+        else
+            bar+="·"
+        fi
+    done
+    echo "  Progress: [$(green "$bar")]  $done_count / $total"
+}
+
+cmd_reset() {
+    read -rp "Wipe all progress? [y/N] " ans
+    if [[ "$ans" =~ ^[yY] ]]; then
+        : > "$PROGRESS_FILE"
+        echo "Progress cleared."
+    fi
+}
+
+cmd_help() {
+    cat <<EOF
+Usage: ctf <command> [args]
+
+Commands:
+  list                  Show all challenges and which you've solved
+  start <NN>            Open challenge NN's instructions
+  submit <NN> [flag]    Submit a flag (or just NN for state-based checks)
+  hint <NN>             Get a one-line hint
+  progress              Show a progress bar
+  reset                 Wipe all progress (asks for confirmation)
+  help                  This message
+EOF
+}
+
+case "${1:-list}" in
+    list|ls)    shift; cmd_list "$@" ;;
+    start|show) shift; cmd_start "$@" ;;
+    submit)     shift; cmd_submit "$@" ;;
+    hint)       shift; cmd_hint "$@" ;;
+    progress)   shift; cmd_progress "$@" ;;
+    reset)      shift; cmd_reset "$@" ;;
+    help|-h|--help) cmd_help ;;
+    *)          cmd_help; exit 1 ;;
+esac

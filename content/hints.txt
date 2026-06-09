@@ -1,0 +1,11 @@
+01: Hidden files and directories start with a dot. `ls` won't show them by default — what flag makes it?
+02: `find` takes a starting directory and a `-name` pattern. Wildcards like `*.key` work.
+03: `grep PATTERN FILE` prints every line that matches. You're looking for a word the README mentions.
+04: `head -n 1 FILE` shows the first line. There's a sister command for the last line.
+05: `grep -c PATTERN FILE` counts matching lines for you. Or pipe `grep` into `wc -l`.
+06: A file has to be executable to run as a program. `chmod` changes permissions; `+x` adds execute.
+07: `mkdir` makes a directory. `mv` moves files. Read the challenge for the exact target path.
+08: The redirection operators are `>` (overwrite) and `>>` (append). Both write a command's output to a file.
+09: Use `ps aux` to list processes. `pgrep -f NAME` finds them by name. `kill PID` ends one.
+10: `curl http://HOST:PORT/PATH` fetches a URL. The README tells you the host, port, and path.
+11: Three fragments, three different commands. Hidden dirs start with a dot — `ls -la`. Recursive search is `grep -r`. Line N of a file: `head -n N FILE | tail -n 1`. Glue fragments with underscores inside FLAG{...}.

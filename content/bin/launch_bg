@@ -1,0 +1,6 @@
+#!/bin/bash
+# Spawns the challenge-09 decoy process. Uses `exec -a` so the resulting
+# process shows up in `ps` as "decoy_daemon" — independent of the parent
+# command line. That way `pkill -f decoy_daemon` only matches the actual
+# decoy, not the launcher chain that started it.
+exec -a decoy_daemon /bin/bash -c 'while true; do sleep 30; done'

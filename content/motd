@@ -1,0 +1,18 @@
+
+   ____ _____ _____   _____    _    _
+  / ___|_   _|  ___| |_   _|__| |__(_) ___
+ | |     | | | |_      | |/ _ \ '_ \ |/ _ \
+ | |___  | | |  _|     | |  __/ |_) | |  __/
+  \____| |_| |_|       |_|\___|_.__/_|\___|
+
+   == Ubuntu Terminal CTF — 10 + 1 boss ==
+
+  Type:   ctf list           to see all challenges
+          ctf start 01       to open challenge 1
+          ctf submit 01 ...  to submit a flag
+          progress           to see how far you've come
+
+  Cheat? Sure: cat ~/README.md for the full rundown.
+
+  Have fun. The terminal rewards the curious.
+
