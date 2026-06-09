@@ -1,0 +1,8 @@
+== INTERCEPTED TRANSMISSION ==
+
+The first fragment of the flag is below. Keep going — there are two
+more legs, each in a different evidence stash.
+
+  FRAGMENT 1:  b0ss
+
+(You found this by listing hidden directories with `ls -la`. Good.)

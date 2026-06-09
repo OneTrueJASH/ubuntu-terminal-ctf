@@ -1,0 +1,8 @@
+You found it. Most beginners walk right past hidden files (anything
+starting with a dot) because `ls` skips them. Use `ls -a` or `ls -la`
+and the whole filesystem opens up.
+
+FLAG{l00k_in_the_d4rk}
+
+Submit it with:
+   ctf submit 01 FLAG{l00k_in_the_d4rk}

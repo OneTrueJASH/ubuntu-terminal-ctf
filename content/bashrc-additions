@@ -1,0 +1,14 @@
+
+# --- CTF customisations ------------------------------------------------------
+export PS1='\[\e[1;32m\]hacker@ctf\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]$ '
+alias ll='ls -la'
+alias la='ls -A'
+alias ..='cd ..'
+
+# Show the welcome banner on every login (sshd PrintMotd is off so we do it).
+if [ -t 1 ] && [ -z "${CTF_BANNER_SHOWN:-}" ]; then
+    export CTF_BANNER_SHOWN=1
+    cat /etc/motd
+    echo
+    progress 2>/dev/null || true
+fi

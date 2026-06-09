@@ -1,0 +1,12 @@
+# Built artifacts — ship via GitHub Releases, not git
+*.tar
+*.tar.gz
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Editor state
+.vscode/
+.idea/
+*.swp

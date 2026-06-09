@@ -1,0 +1,5 @@
+Inside is the secret payload:
+
+  FLAG{m0v3d_w1th_st3alth}
+
+Now stash this file at ~/vault/treasure.txt and submit the flag.

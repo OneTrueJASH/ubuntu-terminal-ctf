@@ -1,0 +1,10 @@
+FLAG{m3ssage_
+Roses are red,
+violets are blue,
+the middle of files
+is rarely the clue.
+Files have ends
+and files have starts,
+the trick is just knowing
+which command does which parts.
+in_a_b0ttle}

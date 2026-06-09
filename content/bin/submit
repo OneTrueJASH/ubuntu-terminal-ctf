@@ -1,0 +1,3 @@
+#!/bin/bash
+# Convenience alias: `submit 01 FLAG{...}` instead of `ctf submit 01 FLAG{...}`
+exec /opt/ctf/bin/ctf submit "$@"
