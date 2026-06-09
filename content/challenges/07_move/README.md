@@ -1,25 +1,32 @@
 # Challenge 07 — Stash the Loot
 
-You've found some loot at `~/challenges/07_move/loot.txt`. To prove
-you can keep it safe, you need to:
-
-1. Create a new directory called `vault` in your home folder.
-2. **Move** the loot file into that vault, renaming it to `treasure.txt`.
-
-So the final location should be: `~/vault/treasure.txt`
-
-**Then** read the file — the flag is inside.
-
-## What you need to do
+You've recovered some loot:
 
 ```
-mkdir ~/vault
-mv ~/challenges/07_move/loot.txt ~/vault/treasure.txt
-cat ~/vault/treasure.txt
+~/challenges/07_move/loot.txt
 ```
 
-(`mv` does double duty in Unix: moving files AND renaming them. The
-"old name" and "new name" can be in different directories.)
+Operational discipline says you can't leave it sitting where you
+found it. You need to stash it in a vault. The vault doesn't exist
+yet — you'll have to create one inside your home directory. Once
+the vault exists, transfer the file into it.
+
+For extra cover, rename it during the move from `loot.txt` to
+`treasure.txt` — anyone searching for "loot" will come up empty.
+
+When you're done, the final path should be:
+
+```
+~/vault/treasure.txt
+```
+
+The flag is inside the file. Read it after the move.
+
+## Objective
+
+1. Create the vault directory.
+2. Move the loot into it, renaming as you go.
+3. Submit the flag from inside.
 
 ## Submit
 
@@ -27,9 +34,11 @@ cat ~/vault/treasure.txt
 ctf submit 07 FLAG{...}
 ```
 
-The checker will verify the file is at the right place **and** that
-your flag matches.
+The checker confirms both that the file ended up at the right path
+AND that the flag you submit matches.
 
-## Commands you'll use
+## Stuck?
 
-`mkdir`, `mv`, `cat`
+```
+ctf hint 07
+```

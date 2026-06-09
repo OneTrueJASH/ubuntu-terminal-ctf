@@ -1,21 +1,20 @@
 # Challenge 02 — Needle in a Haystack
 
-A previous admin left a backdoor file somewhere in a giant directory
-tree. You don't know which folder it's in — but you know its name
-ends with **`.key`**.
+Intel: the previous admin stashed a backup key somewhere inside
+`~/challenges/02_find/haystack/`. The directory holds hundreds of decoy
+files scattered across nested subdirectories.
 
-**Goal:** locate the `.key` file and read the flag inside it.
+What you know about the file:
 
-## What you need to do
+- Its name ends with `.key`
+- You don't know which folder it lives in
 
-1. Look at the haystack:
-   `ls ~/challenges/02_find/haystack/` — there are a LOT of files.
-2. Use `find` to search recursively for files matching `*.key`.
-   `find` syntax:
-   ```
-   find <where_to_search> -name "<pattern>"
-   ```
-3. Once you have the path, `cat` the file to read the flag.
+You won't find it by clicking around — there are too many places to
+look. There's a tool built for exactly this kind of recursive search.
+
+## Objective
+
+Locate the `.key` file. Read it. Submit the flag inside.
 
 ## Submit
 
@@ -23,6 +22,8 @@ ends with **`.key`**.
 ctf submit 02 FLAG{...}
 ```
 
-## Commands you'll use
+## Stuck?
 
-`find`, `cat`
+```
+ctf hint 02
+```

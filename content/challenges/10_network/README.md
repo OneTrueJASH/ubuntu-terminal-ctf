@@ -1,23 +1,25 @@
 # Challenge 10 — Knock on Localhost
 
-This machine is running a tiny web server on **port 8080**. There's
-a flag file served at the path `/flag.txt`.
+Recon shows an internal web service running on **this host**, port
+**8080**. It's not reachable from the outside world, but you're
+already inside the network — you can talk to it directly.
 
-**Goal:** fetch the flag with `curl`.
+Somewhere on that service, at the path `/flag.txt`, the next clue
+is waiting.
 
-## What you need to do
+There's no browser available in the terminal. But you do have a
+tool that takes a URL, fetches whatever's at it, and prints the
+contents straight to your screen.
+
+The URL you want will look like:
 
 ```
-curl http://localhost:8080/flag.txt
+http://localhost:8080/flag.txt
 ```
 
-That's it! `curl` downloads whatever URL you give it and prints it.
+## Objective
 
-Bonus: try
-```
-curl http://localhost:8080/
-```
-to see what else is being served.
+Pull the flag from the web service. Submit it.
 
 ## Submit
 
@@ -25,6 +27,8 @@ to see what else is being served.
 ctf submit 10 FLAG{...}
 ```
 
-## Commands you'll use
+## Stuck?
 
-`curl`
+```
+ctf hint 10
+```

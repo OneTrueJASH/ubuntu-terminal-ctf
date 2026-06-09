@@ -1,20 +1,22 @@
 # Challenge 03 — Search the Access Log
 
-The server's access log has thousands of normal requests and exactly
-**one** suspicious entry. The intruder's request line contains the
-word `INTRUDER`.
+Last night, between thousands of routine HTTP requests, exactly one
+attacker hit this server. They tried to be subtle but the IDS tagged
+their request line with the word **`INTRUDER`** — a signature they
+didn't notice they were leaving behind.
 
-**Goal:** find that one line — it contains the flag.
+The log is at:
 
-## What you need to do
+```
+~/challenges/03_grep/access.log     (about 5,000 lines)
+```
 
-1. The log file is:
-   `~/challenges/03_grep/access.log`
-2. Use `grep` to search for the suspicious entry:
-   ```
-   grep "<word>" <file>
-   ```
-3. The matching line will have the flag.
+Scrolling won't cut it. You need to ask the system to extract just the
+line that matches a specific string.
+
+## Objective
+
+Find the intruder's log line. Submit the flag embedded in it.
 
 ## Submit
 
@@ -22,6 +24,8 @@ word `INTRUDER`.
 ctf submit 03 FLAG{...}
 ```
 
-## Commands you'll use
+## Stuck?
 
-`grep`
+```
+ctf hint 03
+```

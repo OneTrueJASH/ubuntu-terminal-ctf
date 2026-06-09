@@ -1,24 +1,23 @@
 # Challenge 04 — Message in a Bottle
 
-A poem file has the flag **split in two**:
-the first piece is on the **first line**, the second piece is on the
-**last line**. The middle is just decoy text.
+Recovered from the suspect's apartment: a handwritten poem. Most of
+it is decoy text — flowery middle stanzas designed to throw off
+casual readers.
 
-**Goal:** assemble the full flag.
+The real message is split across two pieces only: the **very first
+line** of the file and the **very last line**. Everything between
+them is filler.
 
-## What you need to do
+The poem is at:
 
-1. The file is:
-   `~/challenges/04_head_tail/poem.txt`
-2. Use `head` to read the **first** line of the file:
-   ```
-   head -n 1 <file>
-   ```
-3. Use `tail` to read the **last** line:
-   ```
-   tail -n 1 <file>
-   ```
-4. Stick the two halves together (no spaces) — that's your flag.
+```
+~/challenges/04_head_tail/poem.txt
+```
+
+## Objective
+
+Read the first line. Read the last line. Glue the two pieces
+together (no spaces). That's the flag.
 
 ## Submit
 
@@ -26,6 +25,8 @@ the first piece is on the **first line**, the second piece is on the
 ctf submit 04 FLAG{...}
 ```
 
-## Commands you'll use
+## Stuck?
 
-`head`, `tail`
+```
+ctf hint 04
+```

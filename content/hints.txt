@@ -1,11 +1,11 @@
-01: Hidden files and directories start with a dot. `ls` won't show them by default — what flag makes it?
-02: `find` takes a starting directory and a `-name` pattern. Wildcards like `*.key` work.
-03: `grep PATTERN FILE` prints every line that matches. You're looking for a word the README mentions.
-04: `head -n 1 FILE` shows the first line. There's a sister command for the last line.
-05: `grep -c PATTERN FILE` counts matching lines for you. Or pipe `grep` into `wc -l`.
-06: A file has to be executable to run as a program. `chmod` changes permissions; `+x` adds execute.
-07: `mkdir` makes a directory. `mv` moves files. Read the challenge for the exact target path.
-08: The redirection operators are `>` (overwrite) and `>>` (append). Both write a command's output to a file.
-09: Use `ps aux` to list processes. `pgrep -f NAME` finds them by name. `kill PID` ends one.
-10: `curl http://HOST:PORT/PATH` fetches a URL. The README tells you the host, port, and path.
-11: Three fragments, three different commands. Hidden dirs start with a dot — `ls -la`. Recursive search is `grep -r`. Line N of a file: `head -n N FILE | tail -n 1`. Glue fragments with underscores inside FLAG{...}.
+01: Hidden files and directories start with a dot. The default `ls` skips them. Look at `ls --help` for the flag that includes hidden entries.
+02: There's a command literally called `find` for searching for files across nested directories by name. Try `find --help` for the syntax of name patterns.
+03: When you need to filter lines from a file by their content, the tool is `grep`. Run `grep --help` for usage.
+04: `head` shows lines from the start of a file. There's a sister command for the end of the file. Either accepts `-n N` to control how many lines.
+05: Two ways: `grep -c PATTERN FILE` counts matching lines directly, OR pipe `grep` into `wc -l`. Both give you the same number — the answer.
+06: The file's execute bit isn't set. `chmod` changes permissions; `+x` adds the execute right.
+07: `mkdir` creates a directory. `mv` does double duty — moves AND renames. The "destination" you pass it can be both a new directory and a new filename at the same time.
+08: To send a command's output into a file instead of the screen, use redirection: `>` overwrites, `>>` appends. So `cmd > file` then `cmd2 >> file` gets you two lines.
+09: `ps aux` lists every process running on the system. Pipe it through `grep` to find the one you want. Then `kill PID` sends the terminate signal.
+10: `curl URL` fetches whatever's at that URL and prints it. The URL is given in the challenge.
+11: Three legs, three commands you already know. Leg 1: a flag for `ls`. Leg 2: a flag for `grep` that makes it recursive. Leg 3: combine `head` and `tail` with a pipe to isolate one line.

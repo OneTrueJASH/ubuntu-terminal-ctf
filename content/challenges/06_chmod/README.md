@@ -1,30 +1,23 @@
 # Challenge 06 — Unlock the Script
 
-There's a script at `~/challenges/06_chmod/reveal.sh` that, when run,
-prints the flag. The problem: it doesn't have execute permission, so
-the shell refuses to run it.
+An insider left you a tool:
 
-**Goal:** make the script executable, then run it.
+```
+~/challenges/06_chmod/reveal.sh
+```
 
-## What you need to do
+Run it and you get your next flag — except the system bounces you
+with **"Permission denied"**. The script is there. It belongs to you.
+The problem isn't ownership; it's that the file's permission bits
+don't include the right to **execute** it.
 
-1. Try to run it first (it'll fail):
-   ```
-   ./reveal.sh
-   ```
-2. Check the file's permissions:
-   ```
-   ls -l reveal.sh
-   ```
-   See the dashes where the `x` (execute) bits should be?
-3. Add the execute bit:
-   ```
-   chmod +x reveal.sh
-   ```
-4. Now run it:
-   ```
-   ./reveal.sh
-   ```
+You'll need to grant that right yourself before the shell will run
+the file. (Listing the file with the long-form `ls` will show you
+exactly what permissions are missing.)
+
+## Objective
+
+Make the script executable. Run it. Submit the flag.
 
 ## Submit
 
@@ -32,6 +25,8 @@ the shell refuses to run it.
 ctf submit 06 FLAG{...}
 ```
 
-## Commands you'll use
+## Stuck?
 
-`chmod`, `ls -l`, running a script with `./`
+```
+ctf hint 06
+```
