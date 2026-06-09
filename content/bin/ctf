@@ -5,12 +5,17 @@ set -u
 
 CHALLENGES_DIR="$HOME/challenges"
 PROGRESS_FILE="$HOME/.ctf/progress"
+STARTED_FILE="$HOME/.ctf/started_at"
+HINTS_USED_FILE="$HOME/.ctf/hints_used"
 HASH_FILE="/opt/ctf/flags.sha256"
 CHECKS_DIR="/opt/ctf/checks"
 HINTS_FILE="/opt/ctf/hints.txt"
 
 mkdir -p "$(dirname "$PROGRESS_FILE")"
 touch "$PROGRESS_FILE"
+
+# Record first-touch timestamp so the finale can show total elapsed time.
+[ -f "$STARTED_FILE" ] || date +%s > "$STARTED_FILE"
 
 # --- helpers ---------------------------------------------------------------
 
@@ -112,6 +117,10 @@ cmd_hint() {
     short=$(normalize_short "${1:-}")
     [ -z "$short" ] && { echo "Usage: ctf hint <NN>"; return 1; }
     if [ -f "$HINTS_FILE" ] && grep -q "^$short:" "$HINTS_FILE"; then
+        # Increment hint counter (only counts hints actually shown)
+        local prev=0
+        [ -f "$HINTS_USED_FILE" ] && prev=$(cat "$HINTS_USED_FILE")
+        echo $((prev + 1)) > "$HINTS_USED_FILE"
         echo
         echo "  $(yellow "Hint for $short:")"
         grep "^$short:" "$HINTS_FILE" | sed "s/^$short:/   /"
@@ -162,12 +171,135 @@ cmd_submit() {
 cmd_solved() {
     local short="$1"
     mark_done "$short"
+
+    # If that was the last one, skip the normal box and trigger the finale.
+    local done_count total
+    total=$(ls -d "$CHALLENGES_DIR"/*/ 2>/dev/null | wc -l | tr -d ' ')
+    done_count=$(wc -l < "$PROGRESS_FILE" | tr -d ' ')
+    if [ "$done_count" -eq "$total" ]; then
+        cmd_finale
+        return
+    fi
+
     echo
     echo "  $(green '   ╔═══════════════════════════════╗')"
     echo "  $(green "   ║  ✓ Solved challenge $short!        ║")"
     echo "  $(green '   ╚═══════════════════════════════╝')"
     echo
     cmd_progress
+}
+
+# Format an elapsed-seconds value as "Xh Ym" or "Ym Zs"
+format_elapsed() {
+    local secs="$1"
+    if [ "$secs" -ge 3600 ]; then
+        printf "%dh %dm" "$((secs / 3600))" "$(((secs % 3600) / 60))"
+    elif [ "$secs" -ge 60 ]; then
+        printf "%dm %ds" "$((secs / 60))" "$((secs % 60))"
+    else
+        printf "%ds" "$secs"
+    fi
+}
+
+# Pick a celebratory rank based on hints used.
+finale_rank() {
+    local hints="$1"
+    if   [ "$hints" -eq 0 ]; then echo "PURE CRACKED — NO HINTS USED"
+    elif [ "$hints" -le 2 ]; then echo "MASTER"
+    elif [ "$hints" -le 5 ]; then echo "HACKER"
+    elif [ "$hints" -le 9 ]; then echo "APPRENTICE"
+    else                          echo "STEADY LEARNER"
+    fi
+}
+
+cmd_stats() {
+    local total done_count hints elapsed_secs
+    total=$(ls -d "$CHALLENGES_DIR"/*/ 2>/dev/null | wc -l | tr -d ' ')
+    done_count=$(wc -l < "$PROGRESS_FILE" | tr -d ' ')
+    hints=0
+    [ -f "$HINTS_USED_FILE" ] && hints=$(cat "$HINTS_USED_FILE")
+    if [ -f "$STARTED_FILE" ]; then
+        elapsed_secs=$(( $(date +%s) - $(cat "$STARTED_FILE") ))
+    else
+        elapsed_secs=0
+    fi
+    echo
+    echo "  $(yellow 'STATS')"
+    echo "  ─────"
+    printf "  %-15s %s\n" "Solved:"      "$done_count / $total"
+    printf "  %-15s %s\n" "Hints used:"  "$hints"
+    printf "  %-15s %s\n" "Time so far:" "$(format_elapsed "$elapsed_secs")"
+    echo
+}
+
+cmd_finale() {
+    local total done_count hints elapsed_secs rank
+    total=$(ls -d "$CHALLENGES_DIR"/*/ 2>/dev/null | wc -l | tr -d ' ')
+    done_count=$(wc -l < "$PROGRESS_FILE" | tr -d ' ')
+    hints=0
+    [ -f "$HINTS_USED_FILE" ] && hints=$(cat "$HINTS_USED_FILE")
+    if [ -f "$STARTED_FILE" ]; then
+        elapsed_secs=$(( $(date +%s) - $(cat "$STARTED_FILE") ))
+    else
+        elapsed_secs=0
+    fi
+    rank=$(finale_rank "$hints")
+
+    [ -t 1 ] && clear
+    echo
+
+    # Big banner via figlet
+    if command -v figlet >/dev/null; then
+        figlet -w 72 -c "MISSION"  | sed 's/^/ /'
+        figlet -w 72 -c "COMPLETE" | sed 's/^/ /'
+    else
+        echo "  *** MISSION COMPLETE ***"
+    fi
+
+    echo
+    echo "  $(green '─────────────────────────────────────────────────────────────')"
+    echo "  $(green '                   TERMINAL HACKER')"
+    echo "  $(green "                   RANK:  $rank")"
+    echo "  $(green '─────────────────────────────────────────────────────────────')"
+    echo
+
+    echo "  $(yellow 'FINAL STATS')"
+    echo "  ───────────"
+    printf "  %-18s %s\n" "Challenges solved:" "$(green "$done_count / $total")"
+    printf "  %-18s %s\n" "Total time:"        "$(green "$(format_elapsed "$elapsed_secs")")"
+    printf "  %-18s %s\n" "Hints used:"        "$(green "$hints")"
+    echo
+
+    echo "  $(yellow 'WHAT YOU LEARNED')"
+    echo "  ────────────────"
+    cat <<'NEXT'
+  You now know enough Unix to:
+    - Set up a Raspberry Pi or a cloud server
+    - Write bash scripts that automate boring tasks
+    - SSH into remote machines and edit files there
+    - Read system logs to debug things that break
+    - Survive in literally any Linux environment
+
+  When you're ready, the next ladder rungs are:
+    - tmux         multiple terminals in one window
+    - ssh-keygen   passwordless logins
+    - vim or nano  editing text without leaving the terminal
+    - git          version control (every developer uses this)
+    - sed / awk    text-manipulation power tools
+NEXT
+    echo
+
+    echo "  $(yellow 'COMMANDS YOU CAN STILL RUN')"
+    echo "  ──────────────────────────"
+    echo "  ctf list        revisit your wins"
+    echo "  ctf stats       show stats anytime"
+    echo "  ctf finale      replay this screen"
+    echo
+
+    echo "  $(green '═════════════════════════════════════════════════════════════')"
+    echo "  $(green '   The terminal is yours.  Go build something.')"
+    echo "  $(green '═════════════════════════════════════════════════════════════')"
+    echo
 }
 
 cmd_progress() {
@@ -203,6 +335,8 @@ Commands:
   submit <NN> [flag]    Submit a flag (or just NN for state-based checks)
   hint <NN>             Get a one-line hint
   progress              Show a progress bar
+  stats                 Show solved/hints/time-so-far
+  finale                Replay the mission-complete screen (after 100%)
   reset                 Wipe all progress (asks for confirmation)
   help                  This message
 EOF
@@ -214,6 +348,8 @@ case "${1:-list}" in
     submit)     shift; cmd_submit "$@" ;;
     hint)       shift; cmd_hint "$@" ;;
     progress)   shift; cmd_progress "$@" ;;
+    stats)      shift; cmd_stats "$@" ;;
+    finale)     shift; cmd_finale "$@" ;;
     reset)      shift; cmd_reset "$@" ;;
     help|-h|--help) cmd_help ;;
     *)          cmd_help; exit 1 ;;
