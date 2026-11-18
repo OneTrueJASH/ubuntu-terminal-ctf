@@ -21,5 +21,5 @@ echo "Exported: $OUT ($size)"
 echo
 echo "Copy it to the target machine, then there run:"
 echo "  gunzip -c $OUT | docker load"
-echo "  docker run -d --name ctf -p 2222:22 $IMAGE"
+echo "  docker run -d --name ctf -p 127.0.0.1:2222:22 $IMAGE"
 echo "  ssh hacker@localhost -p 2222    # password: hacker"

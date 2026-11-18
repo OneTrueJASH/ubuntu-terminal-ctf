@@ -16,7 +16,7 @@ echo "Starting '$NAME' from $IMAGE on host port $PORT..."
 docker run -d \
     --name "$NAME" \
     --restart unless-stopped \
-    -p "$PORT:22" \
+    -p "127.0.0.1:$PORT:22" \
     "$IMAGE"
 
 # Give sshd a couple seconds to come up.

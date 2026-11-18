@@ -24,7 +24,7 @@ curl -LO https://github.com/OneTrueJASH/ubuntu-terminal-ctf/releases/latest/down
 
 ```bash
 gunzip -c ubuntu-terminal-ctf.tar.gz | docker load
-docker run -d --name ctf -p 2222:22 ubuntu-terminal-ctf:latest
+docker run -d --name ctf -p 127.0.0.1:2222:22 ubuntu-terminal-ctf:latest
 ```
 
 ### 3. SSH into the container
@@ -88,7 +88,7 @@ ssh hacker@localhost -p 2222
 Wipe everything and start over:
 ```bash
 docker rm -f ctf
-docker run -d --name ctf -p 2222:22 ubuntu-terminal-ctf:latest
+docker run -d --name ctf -p 127.0.0.1:2222:22 ubuntu-terminal-ctf:latest
 ```
 
 ---
